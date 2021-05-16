@@ -27,27 +27,51 @@
               </p>
             <p v-if="entry.description">{{entry.description}}</p>
 
-            <a class="button is-primary" target="_blank" :href="googleMapsDirections(entry)">Get directions</a>
+
+            <a v-if="entry.latitude && entry.longitude" class="button is-primary" target="_blank" :href="googleMapsDirections(entry)">Get directions</a>
           </div>
           <div class="popup-sidebar" v-if="parseInt(entry.weight)">
-            <h4 class="popup-sidebar--title">Here last year</h4>
+            <h4 class="popup-sidebar--title">In the last year:</h4>
             <ul>
               <li>
-                <h5 class="popup-sidebar--number">{{ convertWeightToNumber(entry.weight) }}kg</h5>
+                <h5 class="popup-sidebar--number">
+                  <ICountUp
+                    v-if="currentPopupID == entry.id"
+                    :endVal="convertWeightToNumber(entry.weight)"
+                    :options="options"
+                  />kg</h5>
                 of glass recycled
               </li>
               <li>
-                <h5 class="popup-sidebar--number">{{convertWeightToWords(entry.weight)}}</h5>
+                <h5 class="popup-sidebar--number"><ICountUp
+                v-if="currentPopupID == entry.id"
+                  :delay="250"
+                  :endVal="convertWeightToWords(entry.weight)"
+                  :options="options"
+                /></h5>
                 <p>glass jars and bottles</p>
               </li>
 
               <li>
-                <h5 class="popup-sidebar--number">{{ convertWeightToEnergy(entry.weight) }}kWh</h5>
-                <p>energy saved</p>
-
+                <h5 class="popup-sidebar--number">
+                  <ICountUp
+                  v-if="currentPopupID == entry.id"
+                    :delay="500"
+                    :endVal="convertWeightToEnergy(entry.weight)"
+                    :options="options"
+                  />kWh</h5>
+                  <p>energy saved</p>
               </li>
 
-              <li v-html="convertWeightToRealWorld(entry.weight)">
+              <li>
+                <h5 class="popup-sidebar--number">
+                <ICountUp
+                v-if="currentPopupID == entry.id"
+                  :delay="750"
+                  :endVal="convertWeightToRealWorld(entry.weight)[0]"
+                  :options="options"
+                /></h5>
+                <p>{{ convertWeightToRealWorld(entry.weight)[1] }}</p>
               </li>
             </ul>
           </div>
@@ -78,11 +102,13 @@ import { latLng } from "leaflet";
 import { LIconDefault,LPopup, LIcon, LMap, LTileLayer, LMarker, LControlZoom } from 'vue2-leaflet';
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import * as focusTrap from 'focus-trap';
+import ICountUp from 'vue-countup-v2';
 
 export default {
   name: 'Map',
   props: ['entries', 'selectedEntryID', 'userLatLng', 'isLandscape'],
   components: {
+    ICountUp,
     'v-icondefault': LIconDefault,
     LPopup,
     LMap,
@@ -94,6 +120,12 @@ export default {
   },
   data () {
     return {
+
+      options: {
+        useEasing: true,
+        useGrouping: true,
+      },
+
       zoom: 12,
       center: latLng(53.7928737,-1.546013),
       // url: 'https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.png',
@@ -112,7 +144,7 @@ export default {
       },
       showMap: true,
       mapActive: false,
-      currentPopup: null,
+      currentPopupID: null,
       popupFocusTrap: null,
       clusterOptions: {
         disableClusteringAtZoom: 18,
@@ -153,6 +185,7 @@ export default {
         this.$refs.map.mapObject.flyTo(this.$refs[ newID ][ 0 ].latLng, 18);
         this.$refs.map.mapObject.once('moveend', () => {
           this.$refs[ newID ][ 0 ].mapObject.openPopup();
+          this.currentPopupID = newID;
         });
       }
     }
@@ -168,37 +201,32 @@ export default {
       let power = this.convertWeightToEnergy(value);
 
       if(number > 100000) {
-        return `<h5 class="popup-sidebar--number">${ Math.round(power/3700)}</h5>
-                <p>houses powered for a year</p>`;
+        return [Math.round(power/3700), 'houses powered for a year'];
       }
       else if(number > 30000) {
-        return `<h5 class="popup-sidebar--number">${ Math.round(power/50)}</h5>
-                <p>e-Bikes powered for a year</p>`;
+        return [Math.round(power/50), 'e-Bikes powered for a year'];
       }
       else if(number > 10000) {
-        return `<h5 class="popup-sidebar--number">${ Math.round(power/35)}</h5>
-          <p>laptops powered for a year</p>`;
+        return [Math.round(power/35), 'laptops powered for a year'];
       }
       else {
-        return `<h5 class="popup-sidebar--number">${ Math.round(power/1.8)}</h5>
-                <p>mobile phones powered for a year</p>`;
+        return [Math.round(power/1.8), 'mobile phones powered for a year'];
       }
     },
 
 
     convertWeightToNumber(value) {
       let number = parseFloat(value.replace(',',''));
-      number = Math.round(number)
-      return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return Math.round(number);
     },
 
     convertWeightToWords(value) {
       let number = parseFloat(value.replace(',',''))/0.3;
       if(number > 1000000) {
-        return `${Math.round(number/1000000)} million`;
+        return Math.round(number/1000000) * 1000000;
       }
       else if(number > 1000) {
-        return `${Math.round(number/1000)},000`
+        return Math.round(number/1000) * 1000;
       }
       else {
         return Math.round(number);
@@ -230,7 +258,12 @@ export default {
     },
 
     markerClicked(selectedEntryID) {
-      this.$emit('marker-clicked', selectedEntryID);
+
+
+        this.$refs.map.mapObject.flyTo(this.$refs[selectedEntryID][0].latLng);
+        this.currentPopupID = selectedEntryID;
+        this.$emit('marker-clicked', selectedEntryID);
+
     },
 
     recenterMap() {
@@ -328,21 +361,35 @@ export default {
 
   // }
 
-  .leaflet-popup-close-button {
-    top: ms(0) !important;
-    right: ms(0) !important;
-    width: auto !important;
-    height: auto !important;
-    font: 30px/17px Tahoma, Verdana, sans-serif !important;
+  .leaflet-pane {
+    z-index: 1001;
+
+    a.leaflet-popup-close-button {
+      top: ms(0) !important;
+      right: ms(0) !important;
+      width: 1em !important;
+      height: 1em !important;
+      font: 30px/17px Tahoma, Verdana, sans-serif !important;
+      border-radius: 99999px;
+      padding: 4px;
+      background-color: darken($brand-green, 20%);
+      color: black;
+    }
   }
 
+  .leaflet-popup {
+    width: 365px;
+    // max-width: 95%;
+    @media screen and (orientation: landscape) and (min-width: 800px) {
+      width: 500px
+    }
+  }
 
   .leaflet-popup-content-wrapper {
-      max-width: 480px;
+
       border: 1px solid $medium-gray;
       border-bottom: none;
       position: relative;
-      width: 100vw;
       font-size: 1rem !important;
       padding: 0;
       // border-radius: 0 !important;
@@ -450,26 +497,50 @@ export default {
 
       .popup-inner {
         display: flex;
-        flex-direction: row;
-        align-items: center;
+        flex-direction: column;
+
+        @media screen and (orientation: landscape) and (min-width: 800px) {
+          align-items: center;
+          flex-direction: row;
+        }
       }
 
       .popup-sidebar {
         background-color: $brand-green;
-        flex: 0 0 200px;
         align-self: normal;
-        padding: 30px 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        font-size: ms(-1);
+        padding: 15px 20px;
+        font-size: ms(-2);
+
+        @media screen and (orientation: landscape) and (min-width: 800px) {
+          font-size: ms(-1);
+          display: flex;
+          flex: 0 0 200px;
+          flex-direction: column;
+          justify-content: center;
+          padding: 30px 20px;
+        }
 
         p {
           margin-bottom: 0;
         }
 
+        ul {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+
+          @media screen and (orientation: landscape) and (min-width: 800px) {
+            display: block;
+          }
+        }
+
         li {
-          margin-top: ms(2);
+          flex: 0 0 50%;
+          margin-top: ms(0);
+
+          @media screen and (orientation: landscape) and (min-width: 800px) {
+            margin-top: ms(2);
+          }
         }
 
         &--title {
@@ -478,15 +549,23 @@ export default {
         }
 
         &--number {
-          font-size: ms(2);
+          font-size: ms(1);
           font-weight: 700;
           margin: 0;
+
+          @media screen and (orientation: landscape) and (min-width: 800px) {
+            font-size: ms(2);
+          }
         }
       }
 
       .popup-header {
-        padding: 30px;
-        flex: 0 0 300px;
+        padding: 15px 30px;
+
+        @media screen and (orientation: landscape) and (min-width: 800px) {
+          flex: 0 0 300px;
+          padding: 30px;
+        }
       }
 
       .popup-footer {

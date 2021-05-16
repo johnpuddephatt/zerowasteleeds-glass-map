@@ -4,7 +4,7 @@
       <img class="sidebar--logo" src="/assets/images/glass-icon.png" />
       <div>
         <h1 class="sidebar--subtitle">Zero Waste Leeds</h1>
-        <h2 class="sidebar--title">Glass Recycling Map</h2>
+        <h2 class="sidebar--title">Glass Recycling</h2>
       </div>
       <button class="button sidebar--header--button" v-if="!isLandscape" @click="menuOpen = !menuOpen" v-html="menuOpen ? 'Show map' : 'Show list'"></button>
     </div>
@@ -21,7 +21,7 @@
           </svg>
         </button>
       </div>
-      <div v-else-if="$route.name != 'app'" class="sidebar--postcode">
+      <div v-else class="sidebar--postcode">
         <div class="sidebar--postcode--badge">
           Near to {{ postcode }}
           <button class="sidebar--postcode--clear" @click="clearPostcode" aria-label="Clear postcode">✕</button>
@@ -32,7 +32,7 @@
     <p v-if="error" class="sidebar--postcode--error">{{ error }}</p>
 
     <nav class="sidebar--menu" v-show="isLandscape || menuOpen" >
-      <div class="category-panel" @mouseleave="currentlyHovered = null">
+      <div ref="entrylist" class="category-panel" @mouseleave="currentlyHovered = null">
         <template v-for="entry in entriesSortedByDistance">
           <div class="category-panel--type" v-if="!userLatLng.length && entry.type && newType(entry.type)">{{ entry.type }}</div>
           <button class="category-panel--entry" :class="{selected: (entry.id == selectedEntryID)}" :key="entry.id" :ref="entry.id" @keyup.enter="$emit('menu-entry-selected',entry.id)" @click="$emit('menu-entry-selected',entry.id)">
@@ -117,6 +117,8 @@ export default {
       }
     },
     userLatLng: function(userLatLng) {
+      this.$refs.entrylist.scrollTop = 0;
+
     },
     entries: function(entries) {
       this.$emit('filtered-entries', entries)
@@ -360,7 +362,7 @@ export default {
     }
 
     &--clear {
-      margin-left: ms(0);
+      margin-left: ms(-4);
       color: black;
     }
 
@@ -464,8 +466,12 @@ export default {
 
 
 .category-panel {
-  flex: 1 1 60vh;
+  flex: 1 1 70vh;
   overflow-y: auto;
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    flex: 1 1 60vh;
+  }
 
   &--type {
     background-color: $brand-green;
