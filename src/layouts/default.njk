@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<meta charset="utf-8">
+  	<title>{{ site.title }} | {{ site.strapline }}</title>
+    <link rel="stylesheet" href="/assets/styles/main.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@600;900&display=block" rel="stylesheet">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <!-- <script>{{ site.data.site }}</script> -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-48108307-2"></script> -->
+
+    <!-- <meta property="og:title" content="Hiding in Plain Sight" />
+    <meta property="og:description" content="Discovering the lost cinemas of Leeds" />
+    <meta property="og:url" content="https://lostcinemas.co.uk" />
+    <meta property="og:image" content="https://lostcinemas.co.uk/assets/images/opengraph.jpg" /> -->
+  </head>
+
+  <body>
+    {{ content | safe }}
+  </body>
+</html>

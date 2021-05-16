@@ -1,0 +1,73 @@
+# config.yml
+backend:
+  name: git-gateway
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: hpph
+    api_key: 732351866945655
+    username: admin@hydeparkpicturehouse.co.uk
+    folder:
+      path: 'hidinginplainsight'
+collections:
+  - name: "site" # Used in routes, e.g., /admin/collections/blog
+    label: "Site" # Used in the UI
+    editor:
+      preview: false
+    files:
+      - label: "Config"
+        name: "config"
+        file: "src/_data/site.json"
+        fields: # The fields for each document, usually in front matter
+          - { label: 'Title', name: 'title', widget: 'string', required: false }
+          - { label: 'Stapline', name: 'strapline', widget: 'string', required: false }
+          - { label: 'Welcome title', name: 'welcome_title', widget: 'string', required: false }
+          - { label: 'Welcome message', name: 'welcome_message', widget: 'string', required: false, hint: 'The string $number will be replaced with the current number of cinemas that appear in the database.' }
+  - name: 'pages'
+    label: 'Pages'
+    folder: 'src/pages'
+    create: true
+    editor:
+      preview: false
+    fields:
+      - {label: 'Title', name: 'title', widget: 'string' }
+      - {label: "Body", name: "body", widget: "markdown", buttons: ['bold','italic','link','heading-two','heading-three','quote','bulleted-list','numbered-list']}
+      - {label: 'Order', name: 'order', widget: 'string', hint: 'Sets order in navigation', required: false  }
+      - {label: 'Show in navigation?', name: 'display_in_navigation', widget: 'boolean', required: false }
+  - name: 'cinemas'
+    label: 'Cinemas'
+    folder: 'src/cinemas'
+    create: true
+    editor:
+      preview: false
+    fields:
+      - {label: 'Name', name: 'title', widget: 'string' }
+      - {label: 'Opening date', name: 'date_open', widget: 'string', hint: 'Leave blank if unknown', required: false  }
+      - {label: 'Closing date', name: 'date_close', widget: 'string', hint: 'Leave blank if unknown', required: false }
+      - label: "Status"
+        name: "status"
+        widget: "select"
+        options: ["Open", "Still visible", "Demolished"]
+      - label: "Colour"
+        name: "colour"
+        widget: "select"
+        options: ["Red", "Blue", "Orange", "Cream"]
+        default: "Blue"
+        hint: "Used to determine the background colour on individual cinema pages"
+      - label: Image
+        name: image
+        widget: image
+        required: false
+      - {label: "Location", name: "location", widget: "map", default: '{"type":"Point","coordinates":[-1.5692493,53.8120951]}', required: false }
+      - {label: 'Address or location description', name: 'address', widget: 'string', required: false }
+      - { label: 'Description', name: 'description', widget: 'text', required: false}
+      - { label: 'Extended description', name: 'description_extended', widget: 'markdown', buttons: ["bold", "italic", "link"], required: false}
+      - label: Photos
+        name: photos
+        widget: list
+
+        fields:
+          - { label: 'Image', name: 'file', widget: 'image', required: false}
+          - {label: 'Caption', name: 'caption', widget: 'string', required: false }
+          - {label: 'Date', name: 'date', widget: 'string', required: false }
+          - {label: 'Source', name: 'source', widget: 'string', required: false }

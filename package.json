@@ -1,0 +1,55 @@
+{
+  "name": "hidinginplainsight",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eleventy.js",
+  "dependencies": {
+    "@11ty/eleventy": "^0.11.0",
+    "axios": "^0.19.2",
+    "countup.js": "^2.0.7",
+    "focus-trap": "^6.3.0",
+    "leaflet": "^1.7.1",
+    "vue": "^2.6.12",
+    "vue-countup-v2": "^4.0.0",
+    "vue-gtag": "^1.10.0",
+    "vue-router": "^3.3.4",
+    "vue2-leaflet": "^2.5.2",
+    "vue2-leaflet-markercluster": "^3.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.2",
+    "html-minifier": "^4.0.0",
+    "laravel-mix": "^6.0.0",
+    "modularscale-sass": "^3.0.10",
+    "npm-run-all": "^4.1.5",
+    "resolve-url-loader": "^3.1.0",
+    "rimraf": "^2.7.1",
+    "sass": "^1.32.8",
+    "sass-loader": "^8.0.2",
+    "slugify": "^1.4.4",
+    "svg-sprite": "^1.5.0",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^5.16.0"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "serve:webpack": "cross-env NODE_ENV=local node_modules/webpack/bin/webpack.js --progress --env=local --config=node_modules/laravel-mix/setup/webpack.config.js --mode development --watch",
+    "serve:eleventy": "ELEVENTY_ENV=development eleventy --serve",
+    "serve": "npm-run-all clean --parallel serve:*",
+    "build:webpack": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --env=production --config=node_modules/laravel-mix/setup/webpack.config.js --mode production",
+    "build:eleventy": "ELEVENTY_ENV=production eleventy",
+    "seed": "ELEVENTY_ENV=seed eleventy",
+    "build": "run-s clean build:*",
+    "debug": "DEBUG=Eleventy* ELEVENTY_ENV=development eleventy --serve"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johnpuddephatt/hidinginplainsight/issues"
+  },
+  "homepage": "https://github.com/johnpuddephatt/hidinginplainsight#readme"
+}

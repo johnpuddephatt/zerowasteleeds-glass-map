@@ -1,0 +1,17 @@
+---
+layout: default.njk
+---
+{% include 'analytics.njk' %}
+{% include 'header.njk' %}
+<div class="container">
+  <h1 class="page-title">{{ title }}</h1>
+  <div class="page-content">
+    {{ content | safe }}
+  </div>
+</div>
+
+<style>
+.site-header {
+  display: flex !important;
+}
+</style>

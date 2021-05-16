@@ -1,0 +1,230 @@
+@import 'normalize';
+@import 'base';
+@import 'transitions';
+
+h1, h2, h3, h4, h5, h6  {
+  line-height: 1.1;
+}
+
+html, body {
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
+#app {
+  height: 100vh;
+  height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+  line-height: ms(0);
+  background-color: $brand-light-green;
+  color: $black !important;
+  border-radius: 9999px;
+  font-size: ms(0);
+  padding: ms(-3) ms(-1);
+  display: inline-block;
+  transition: background-color 0.5s ease-in-out;
+
+  &:hover {
+    background-color: darken($brand-light-green, 20%);
+  }
+
+  &.is-secondary {
+    background-color: $black;
+    // color: darken($blue, 30%) !important;
+    &:hover {
+      background-color: darken($black, 20%);
+      color: white !important;
+    }
+  }
+
+   &.is-primary {
+     background-color: $brand-green;
+     &:hover {
+       background-color: darken($brand-green, 20%);
+     }
+   }
+
+   &.is-large {
+     padding: ms(0) ms(2);
+     font-size: ms(1);
+   }
+
+   &.is-ghost {
+     background-color: white;
+     &:hover {
+       background-color: $brand-light-green;
+     }
+   }
+}
+
+.site-header {
+  flex: 0 0 auto;
+  flex-direction: row;
+  background-color: $brand-green;
+  padding: ms(1) ms(0);
+  display: none;
+
+  z-index: 99999999;
+  text-align: center;
+  position: relative;
+  line-height: ms(8);
+
+  &.show {
+    display: block;
+    @media screen and (orientation: landscape) and (min-width: 800px) {
+      display: flex;
+    }
+  }
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+  }
+}
+
+#navTrigger {
+  position: absolute;
+  top: 50%;
+  right: ms(0);
+  transform: translateY(-50%);
+  z-index: 999999999;
+  display: block;
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    display: none;
+  }
+}
+
+#navToggle {
+  display: none
+}
+
+#navToggle:checked + .primary-navigation {
+  transform: translateX(25vw);
+  box-shadow: -1em 0 4em 0em transparentize($gray,0.2);
+
+}
+
+.primary-navigation {
+  line-height: ms(1);
+  transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+  background-color: white;
+  border-left: 1px solid $medium-gray;
+  padding-top: ms(10);
+  position: fixed;
+  width: 75vw;
+  height: 100vh;
+  height: -webkit-fill-available;
+  top: 0;
+  left: 0;
+  z-index: 9999999;
+  transform: translateX(100vw);
+  display: flex;
+  flex-direction: column;
+
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    display: block;
+    transform: none;
+    z-index: auto;
+    position: static;
+    background-color: transparent;
+    border-left: none;
+    padding-top: 0;
+    width: auto;
+    height: auto;
+  }
+
+  a {
+    display: inline-block;
+
+    margin-right: 0;
+    padding: ms(0) ms(2);
+    text-align: right;
+    @media screen and (orientation: landscape) and (min-width: 800px) {
+      margin-right: ms(2);
+      padding: 0;
+      text-align: left;
+    }
+  }
+
+  
+}
+
+.site-title {
+  font-weight: 900;
+  font-size: ms(2);
+  line-height: ms(2);
+  margin-right: ms(4);
+  font-style: italic;
+  font-family: mikado;
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.02rem;
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    line-height: ms(1);
+  }
+}
+
+.page-title {
+  margin-top: ms(8);
+  margin-bottom: ms(3);
+  font-size: ms(6);
+  font-weight: 900;
+  font-family: mikado;
+  font-style: italic;
+}
+
+.container {
+  max-width: 680px;
+  width: 100%;
+  padding: ms(2) ms(0);
+  margin: 0 auto;
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    padding: ms(4) ms(0);
+  }
+}
+
+.page-content {
+
+  h1,h2,h3,h4,h5,h6 {
+    font-weight: 700;
+    margin: 1em 0 0.5em;
+  }
+
+  h1, h2 {
+    font-size: ms(4);
+  }
+
+  h3 {
+    font-size: ms(2);
+  }
+
+  p {
+    margin-bottom: ms(-1);
+  }
+}
+
+.is-invisible {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sr-only {
+  border: 0 !important;
+	clip: rect(1px, 1px, 1px, 1px) !important; /* 1 */
+	-webkit-clip-path: inset(50%) !important;
+		clip-path: inset(50%) !important;  /* 2 */
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: 1px !important;
+	white-space: nowrap !important
+}

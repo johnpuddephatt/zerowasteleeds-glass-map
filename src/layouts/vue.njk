@@ -1,0 +1,15 @@
+---
+layout: default.njk
+---
+<div id="app">
+  <router-view></router-view>
+</div>
+
+{% if build.env == 'production' %}
+  <script src="/assets/scripts/manifest.js" defer></script>
+  <script src="/assets/scripts/vendor.js" defer></script>
+{% endif %}
+<script src="/assets/scripts/main.js" defer></script>
+
+
+
