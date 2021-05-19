@@ -21,57 +21,70 @@
           <div class="popup-header">
             <p class="entry-category">{{ entry.category}}</p>
             <h3 class="entry-title" v-html="entry.name"></h3>
-            <p class="entry-address" v-if="entry.address">
-              {{ entry.address.replace(entry.postcode,'').toLowerCase() }}
-              <span v-if="entry.postcode">{{entry.postcode}}</span>
-              </p>
+            <p class="entry-address" v-if="entry.address">{{ entry.address.replace(entry.postcode,'').toLowerCase() }}<span v-if="entry.postcode">, {{entry.postcode}}</span></p>
             <p v-if="entry.description">{{entry.description}}</p>
 
 
             <a v-if="entry.latitude && entry.longitude" class="button is-primary" target="_blank" :href="googleMapsDirections(entry)">Get directions</a>
           </div>
           <div class="popup-sidebar" v-if="parseInt(entry.weight)">
-            <h4 class="popup-sidebar--title">In the last year:</h4>
+            <h4 class="popup-sidebar--title">Last year at this site:</h4>
             <ul>
               <li>
-                <h5 class="popup-sidebar--number">
-                  <ICountUp
-                    v-if="currentPopupID == entry.id"
-                    :endVal="convertWeightToNumber(entry.weight)"
-                    :options="options"
-                  />kg</h5>
-                of glass recycled
+                <img class="popup-sidebar--icon" src="/assets/images/weight.svg" />
+                <div class="popup-sidebar--text">
+                  <h5 class="popup-sidebar--number">
+                    <ICountUp
+                      v-if="currentPopupID == entry.id"
+                      :endVal="convertWeightToNumber(entry.weight)"
+                      :options="options"
+                    />kg</h5>
+                  of glass recycled
+                </div>
               </li>
               <li>
-                <h5 class="popup-sidebar--number"><ICountUp
-                v-if="currentPopupID == entry.id"
-                  :delay="250"
-                  :endVal="convertWeightToWords(entry.weight)"
-                  :options="options"
-                /></h5>
-                <p>glass jars and bottles</p>
+                <img class="popup-sidebar--icon" src="/assets/images/bottle.svg" />
+                <div class="popup-sidebar--text">
+                  <h5 class="popup-sidebar--number"><ICountUp
+                  v-if="currentPopupID == entry.id"
+                    :delay="250"
+                    :endVal="convertWeightToWords(entry.weight)"
+                    :options="options"
+                  /></h5>
+                  <p>glass jars and bottles</p>
+                </div>
               </li>
 
               <li>
-                <h5 class="popup-sidebar--number">
+                <img class="popup-sidebar--icon" src="/assets/images/electricity.svg" />
+                <div class="popup-sidebar--text">
+                  <h5 class="popup-sidebar--number">
+                    <ICountUp
+                    v-if="currentPopupID == entry.id"
+                      :delay="500"
+                      :endVal="convertWeightToEnergy(entry.weight)"
+                      :options="options"
+                    />kWh</h5>
+                    <p>energy saved</p>
+                  </div>
+              </li>
+            </ul>
+
+            <h4 class="popup-sidebar--title highlight">Saving enough energy to power...</h4>
+            <ul class="highlight">
+              <li>
+
+                <img class="popup-sidebar--icon" :src="convertWeightToRealWorld(entry.weight)[2]" />
+                <div class="popup-sidebar--text">
+                  <h5 class="popup-sidebar--number">
                   <ICountUp
                   v-if="currentPopupID == entry.id"
-                    :delay="500"
-                    :endVal="convertWeightToEnergy(entry.weight)"
+                    :delay="750"
+                    :endVal="convertWeightToRealWorld(entry.weight)[0]"
                     :options="options"
-                  />kWh</h5>
-                  <p>energy saved</p>
-              </li>
-
-              <li>
-                <h5 class="popup-sidebar--number">
-                <ICountUp
-                v-if="currentPopupID == entry.id"
-                  :delay="750"
-                  :endVal="convertWeightToRealWorld(entry.weight)[0]"
-                  :options="options"
-                /></h5>
-                <p>{{ convertWeightToRealWorld(entry.weight)[1] }}</p>
+                  /></h5>
+                  <p>{{ convertWeightToRealWorld(entry.weight)[1] }}</p>
+                </div>
               </li>
             </ul>
           </div>
@@ -201,16 +214,16 @@ export default {
       let power = this.convertWeightToEnergy(value);
 
       if(number > 100000) {
-        return [Math.round(power/3700), 'houses powered for a year'];
+        return [Math.round(power/3700), 'houses for a year', '/assets/images/house.svg'];
       }
       else if(number > 30000) {
-        return [Math.round(power/50), 'e-Bikes powered for a year'];
+        return [Math.round(power/50), 'e-Bikes for a year', '/assets/images/bicycle.svg'];
       }
       else if(number > 10000) {
-        return [Math.round(power/35), 'laptops powered for a year'];
+        return [Math.round(power/35), 'laptops for a year', '/assets/images/laptop.svg'];
       }
       else {
-        return [Math.round(power/1.8), 'mobile phones powered for a year'];
+        return [Math.round(power/1.8), 'mobile phones for a year', '/assets/images/mobile.svg'];
       }
     },
 
@@ -365,28 +378,35 @@ export default {
     z-index: 1001;
 
     a.leaflet-popup-close-button {
-      top: ms(0) !important;
-      right: ms(0) !important;
+      top: ms(-2) !important;
+      right: ms(-2) !important;
       width: 1em !important;
       height: 1em !important;
-      font: 30px/17px Tahoma, Verdana, sans-serif !important;
+      font: 25px/12px Tahoma, Verdana, sans-serif !important;
       border-radius: 99999px;
       padding: 4px;
       background-color: darken($brand-green, 20%);
       color: black;
+
+      @media screen and (orientation: landscape) and (min-width: 800px) {
+        top: ms(0) !important;
+        right: ms(0) !important;
+        width: 1em !important;
+        height: 1em !important;
+      }
     }
   }
 
   .leaflet-popup {
-    width: 365px;
+    width: 350px;
     // max-width: 95%;
     @media screen and (orientation: landscape) and (min-width: 800px) {
-      width: 500px
+      width: 550px
     }
   }
 
   .leaflet-popup-content-wrapper {
-
+      overflow: hidden;
       border: 1px solid $medium-gray;
       border-bottom: none;
       position: relative;
@@ -395,15 +415,6 @@ export default {
       // border-radius: 0 !important;
       box-shadow: 13px 19px 12px -7px rgba(0,0,0,0.2) !important;
 
-      .popup--close {
-        position: absolute;
-        top: ms(0);
-        line-height: 1;
-        right: ms(0);
-        font-size: ms(4);
-        color: $gray;
-      }
-
       .leaflet-popup-content {
         margin: 0 !important;
         width: auto !important;
@@ -411,9 +422,14 @@ export default {
 
       .entry-title {
         text-transform: capitalize;
-        font-size: ms(2);
+        font-size: ms(1);
         font-weight: 400;
-        margin-bottom: ms(-1);
+        margin-bottom: 0;
+
+        @media screen and (orientation: landscape) and (min-width: 800px) {
+          font-size: ms(2);
+          margin-bottom: ms(-1);
+        }
       }
 
       .entry-category {
@@ -428,13 +444,16 @@ export default {
         font-size: ms(-1);
         color: $gray;
         text-transform: capitalize;
+        padding-left: 1em;
 
         &::before {
           content: '';
+          margin-left: -1.25em;
           display: inline-block;
           background-image: url(/assets/images/marker-icon-red.svg);
-          width: 0.75em;
-          height: 1em;
+          width: 1em;
+          height: 1.5em;
+          vertical-align: bottom;
           margin-right: .25em;
           background-size: contain;
           background-repeat: no-repeat;
@@ -443,7 +462,11 @@ export default {
       }
 
       p {
-        margin: 0 0 ms(0);
+        margin: 0 0 ms(-4);
+
+        @media screen and (orientation: landscape) and (min-width: 800px) {
+          margin: 0 0 ms(0);
+        }
       }
 
       .entry-links {
@@ -506,50 +529,96 @@ export default {
       }
 
       .popup-sidebar {
-        background-color: $brand-green;
+        background-color: lighten($brand-green, 15%);
         align-self: normal;
-        padding: 15px 20px;
         font-size: ms(-2);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
 
         @media screen and (orientation: landscape) and (min-width: 800px) {
           font-size: ms(-1);
-          display: flex;
-          flex: 0 0 200px;
+          flex: 0 0 250px;
+          flex-wrap: nowrap;
           flex-direction: column;
           justify-content: center;
-          padding: 30px 20px;
         }
 
         p {
           margin-bottom: 0;
+          flex: 0 0 33%;
         }
 
         ul {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
+          // display: flex;
+          // flex-direction: row;
+          // flex-wrap: wrap;
+          flex: 1 1 auto;
+          padding: 10px 0;
 
           @media screen and (orientation: landscape) and (min-width: 800px) {
             display: block;
+            padding: 15px 0 20px;
+
+          }
+
+          &.highlight {
+            background-color: lighten($brand-green, 5%);
+            @media screen and (orientation: landscape) and (min-width: 800px) {
+              padding-bottom: 20px;
+            }
           }
         }
 
         li {
-          flex: 0 0 50%;
-          margin-top: ms(0);
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          padding: 0 10px;
 
           @media screen and (orientation: landscape) and (min-width: 800px) {
-            margin-top: ms(2);
+            padding: 0 20px;
           }
+
+          &:not(:first-child) {
+            margin-top: ms(-2);
+
+            @media screen and (orientation: landscape) and (min-width: 800px) {
+              margin-top: ms(2);
+            }
+          }
+        }
+
+        &--icon {
+          width: 2.25em;
+          height: auto;
+          margin-right: 0.5em;
+          margin-bottom: auto;
         }
 
         &--title {
           font-weight: 600;
           margin-bottom: 0;
+          padding: 10px 10px;
+          flex: 0 0 40%;
+
+          @media screen and (orientation: landscape) and (min-width: 800px) {
+            padding: 30px 20px 0;
+          }
+
+          &.highlight {
+            background-color: lighten($brand-green, 5%);
+          }
+        }
+
+        &--text {
+          @media screen and (orientation: landscape) and (min-width: 800px) {
+            flex: 1;
+          }
         }
 
         &--number {
-          font-size: ms(1);
+          font-size: ms(0);
           font-weight: 700;
           margin: 0;
 
@@ -560,7 +629,7 @@ export default {
       }
 
       .popup-header {
-        padding: 15px 30px;
+        padding: 15px;
 
         @media screen and (orientation: landscape) and (min-width: 800px) {
           flex: 0 0 300px;

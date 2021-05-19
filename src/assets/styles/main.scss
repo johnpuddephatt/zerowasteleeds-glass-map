@@ -23,10 +23,15 @@ html, body {
   background-color: $brand-light-green;
   color: $black !important;
   border-radius: 9999px;
-  font-size: ms(0);
-  padding: ms(-3) ms(-1);
+  font-size: ms(-1);
+  padding: ms(-6) ms(-2);
   display: inline-block;
   transition: background-color 0.5s ease-in-out;
+
+  @media screen and (orientation: landscape) and (min-width: 800px) {
+    font-size: ms(0);
+    padding: ms(-3) ms(-1);
+  }
 
   &:hover {
     background-color: darken($brand-light-green, 20%);
@@ -42,7 +47,7 @@ html, body {
   }
 
    &.is-primary {
-     background-color: $brand-green;
+     background-color: darken($brand-green, 10%);
      &:hover {
        background-color: darken($brand-green, 20%);
      }
@@ -150,7 +155,7 @@ html, body {
     }
   }
 
-  
+
 }
 
 .site-title {

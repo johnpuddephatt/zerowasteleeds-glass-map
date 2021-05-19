@@ -209,7 +209,7 @@ export default {
   // width: 100%;
   // height: 100%;
   overflow: hidden;
-  top: calc(100% - 11em);
+  top: calc(100% - 10em);
   border-radius: 0.2em;
   border: 1px solid $medium-gray;
 
@@ -330,7 +330,7 @@ export default {
       font-size: ms(-1);
       width: 11em;
       line-height: 1.6;
-      border: 1px solid $medium-gray;
+      border: 1px solid darken($brand-green,15%);
       border-radius: 2em;
       padding: ms(-5) ms(-2);
 
@@ -350,9 +350,9 @@ export default {
       right: 1px;
       top: 1px;
       line-height: 1.4;
-      background-color: $brand-green;
+      background-color: darken($brand-green,10%);
       color: white;
-      border: 1px solid $medium-gray;
+      border: 1px solid darken($brand-green,20%);
       border-radius: 2em;
       padding: ms(-4);
       svg {
@@ -544,6 +544,7 @@ export default {
 
       .category-panel--entry--location {
         background-color: $brand-green;
+        color: $dark-gray;
       }
 
 
