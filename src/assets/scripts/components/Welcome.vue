@@ -64,7 +64,7 @@ export default {
     transform: translate(-50%,-50%);
     z-index: 9999999999;
     background-color: rgba(255,255,255,0.95);
-    padding: ms(8) ms(4);
+    padding: ms(8) ms(4) ms(10);
     border-radius: ms(0);
     animation: popup 1s forwards;
     width: 100%;
@@ -81,7 +81,7 @@ export default {
     }
 
     .dialog-inner {
-      max-width: 400px;
+      max-width: 420px;
       margin: 0 auto;
     }
 
