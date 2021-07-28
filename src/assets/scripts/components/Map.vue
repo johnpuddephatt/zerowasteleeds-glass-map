@@ -273,7 +273,7 @@ export default {
     markerClicked(selectedEntryID) {
 
 
-        this.$refs.map.mapObject.flyTo(this.$refs[selectedEntryID][0].latLng);
+        // this.$refs.map.mapObject.flyTo(this.$refs[selectedEntryID][0].latLng);
         this.currentPopupID = selectedEntryID;
         this.$emit('marker-clicked', selectedEntryID);
 
