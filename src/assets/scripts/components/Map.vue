@@ -604,6 +604,7 @@ export default {
 
           @media screen and (orientation: landscape) and (min-width: 800px) {
             padding: 30px 20px 0;
+            flex: none;
           }
 
           &.highlight {
