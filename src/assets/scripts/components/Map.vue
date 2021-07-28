@@ -398,10 +398,10 @@ export default {
   }
 
   .leaflet-popup {
-    width: 350px;
+    width: 90vw;
     // max-width: 95%;
     @media screen and (orientation: landscape) and (min-width: 800px) {
-      width: 550px
+      width: 550px;
     }
   }
 
