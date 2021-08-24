@@ -6,7 +6,12 @@
         <h1 class="sidebar--subtitle">Zero Waste Leeds</h1>
         <h2 class="sidebar--title">Glass Recycling</h2>
       </div>
-      <button class="button sidebar--header--button" v-if="!isLandscape" @click="menuOpen = !menuOpen" v-html="menuOpen ? 'Show map' : 'Show list'"></button>
+      <button
+        class="button sidebar--header--button"
+        v-if="!isLandscape"
+        @click="menuOpen = !menuOpen"
+        v-html="menuOpen ? 'Show map' : 'Show list'"
+      ></button>
     </div>
 
     <div class="sidebar--controls">
@@ -14,34 +19,82 @@
 
       <div class="sidebar--postcode" v-if="!latLng.length">
         <label for="postcode" class="sr-only">Postcode</label>
-        <input @keyup.enter="convertPostcodeToLatLng" placeholder="Enter postcode" id="postcode" class="sidebar--postcode--input" type="text" v-model="postcode">
-        <button class="sidebar--postcode--button" @click="convertPostcodeToLatLng" aria-label="Search">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <input
+          @keyup.enter="convertPostcodeToLatLng"
+          placeholder="Enter postcode"
+          id="postcode"
+          class="sidebar--postcode--input"
+          type="text"
+          v-model="postcode"
+        />
+        <button
+          class="sidebar--postcode--button"
+          @click="convertPostcodeToLatLng"
+          aria-label="Search"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </button>
       </div>
       <div v-else class="sidebar--postcode">
         <div class="sidebar--postcode--badge">
           Near to {{ postcode }}
-          <button class="sidebar--postcode--clear" @click="clearPostcode" aria-label="Clear postcode">✕</button>
+          <button
+            class="sidebar--postcode--clear"
+            @click="clearPostcode"
+            aria-label="Clear postcode"
+          >
+            ✕
+          </button>
         </div>
       </div>
     </div>
 
     <p v-if="error" class="sidebar--postcode--error">{{ error }}</p>
 
-    <nav class="sidebar--menu" v-show="isLandscape || menuOpen" >
-      <div ref="entrylist" class="category-panel" @mouseleave="currentlyHovered = null">
+    <nav class="sidebar--menu" v-show="isLandscape || menuOpen">
+      <div
+        ref="entrylist"
+        class="category-panel"
+        @mouseleave="currentlyHovered = null"
+      >
         <template v-for="entry in entriesSortedByDistance">
-          <div class="category-panel--type" v-if="!userLatLng.length && entry.type && newType(entry.type)">{{ entry.type }}</div>
-          <button class="category-panel--entry" :class="{selected: (entry.id == selectedEntryID)}" :key="entry.id" :ref="entry.id" @keyup.enter="$emit('menu-entry-selected',entry.id)" @click="$emit('menu-entry-selected',entry.id)">
+          <div
+            class="category-panel--type"
+            :key="entry.id"
+            v-if="!userLatLng.length && entry.type && newType(entry.type)"
+          >
+            {{ entry.type }}
+          </div>
+          <button
+            class="category-panel--entry"
+            :class="{ selected: entry.id == selectedEntryID }"
+            :key="entry.id"
+            :ref="entry.id"
+            @keyup.enter="$emit('menu-entry-selected', entry.id)"
+            @click="$emit('menu-entry-selected', entry.id)"
+          >
             <div class="category-panel--entry--text">
               <span class="category-panel--entry--type">{{ entry.type }}</span>
               <h3 class="category-panel--entry--title">{{ entry.name }}</h3>
             </div>
-            <span class="category-panel--entry--location" v-if="entry.distance">{{ entry.distance < 1 ? `${Math.round(entry.distance * 20)} mins walk` : `${entry.distance}miles` }} </span>
-            <span class="category-panel--entry--location" v-else-if="entry.postcode">{{ entry.postcode }}</span>
+            <span class="category-panel--entry--location" v-if="entry.distance !== undefined">{{ entry.distance < 1 ? `${Math.round(entry.distance * 20)} mins walk` : `${entry.distance} miles` }} </span>
+            <span
+              class="category-panel--entry--location"
+              v-else-if="entry.postcode"
+              >{{ entry.postcode }}</span
+            >
           </button>
         </template>
       </div>
@@ -61,15 +114,19 @@
         </template>
       </nav>
     </transition> -->
-
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'Menu',
-  props: ['entries','selectedEntryID', 'isLandscape', 'userLatLng', 'entryCount'],
+  name: "Menu",
+  props: [
+    "entries",
+    "selectedEntryID",
+    "isLandscape",
+    "userLatLng",
+    "entryCount",
+  ],
   data() {
     return {
       menuOpen: false,
@@ -79,71 +136,64 @@ export default {
       latLng: [],
       currentlyHovered: null,
       categoryLoaded: false,
-      currentCategoryHeading: null
-    }
+      currentCategoryHeading: null,
+    };
   },
   computed: {
     entriesSortedByDistance() {
-      if(this.userLatLng.length) {
-        return this.entries.map( (entry) => {
-          if(entry.latitude && entry.longitude) {
-            entry.distance = this.distanceFromUserLatLng(entry);
-          }
-          else {
-            entry.distance == null;
-          }
-          return entry;
-        }).sort( (a,b) => {
-          if(!b.distance) {
-            return -1;
-          }
-          else {
-            return a.distance - b.distance;
-          }
-        });
-      }
-      else {
+      if (this.userLatLng.length) {
         return this.entries
+          .map((entry) => {
+            if (entry.latitude && entry.longitude) {
+              entry.distance = this.distanceFromUserLatLng(entry);
+            } else {
+              entry.distance == null;
+            }
+            return entry;
+          })
+          .sort((a, b) => {
+            return a.distance - b.distance;
+          });
+      } else {
+        return this.entries;
       }
-    }
+    },
   },
   watch: {
     latLng: function() {
-      this.$emit('user-latlng-changed', this.latLng);
+      this.$emit("user-latlng-changed", this.latLng);
     },
     selectedEntryID: function(selectedEntryID) {
-      if(selectedEntryID) {
+      if (selectedEntryID) {
         this.menuOpen = false;
       }
     },
     userLatLng: function(userLatLng) {
       this.$refs.entrylist.scrollTop = 0;
-
     },
     entries: function(entries) {
-      this.$emit('filtered-entries', entries)
+      this.$emit("filtered-entries", entries);
     },
-    selectedEntryID: function (selectedEntryID) {
+    selectedEntryID: function(selectedEntryID) {
       this.scrollToSidebarEntry(selectedEntryID);
     },
   },
   methods: {
     mouseoverCategory: function(selectedCategoryID) {
-      this.$emit('menu-hovered',selectedCategoryID);
+      this.$emit("menu-hovered", selectedCategoryID);
     },
     convertPostcodeToLatLng: function() {
-      fetch(`//api.postcodes.io/postcodes/${ this.postcode.split(' ').join('') }`)
-      .then(response => response.json())
-      .then((data) => {
-        if(data.status == 200) {
-          this.latLng = [data.result.latitude, data.result.longitude];
-          this.error = null;
-          this.postcode = this.postcode.toUpperCase()
-        }
-        else {
-          this.error = data.error;
-        }
-      });
+      fetch(`//api.postcodes.io/postcodes/${this.postcode.split(" ").join("")}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status == 200) {
+            this.latLng = [data.result.latitude, data.result.longitude];
+            this.error = null;
+            this.postcode = this.postcode.toUpperCase();
+          } else {
+            this.error = data.error;
+          }
+        });
     },
     clearPostcode: function() {
       this.latLng = [];
@@ -152,54 +202,63 @@ export default {
     newType(type) {
       let compareMe = this.currentTypeHeading;
       this.currentTypeHeading = type;
-      return type != compareMe
+      return type != compareMe;
     },
     distanceFromUserLatLng: function(entry) {
-      let distance = this.distance(entry.latitude,entry.longitude, this.userLatLng[0], this.userLatLng[1]);
+      let distance = this.distance(
+        entry.latitude,
+        entry.longitude,
+        this.userLatLng[0],
+        this.userLatLng[1]
+      );
       return Math.round(distance * 10) / 10;
     },
     distance(lat1, lon1, lat2, lon2) {
-      if ((lat1 == lat2) && (lon1 == lon2)) {
+      if (lat1 == lat2 && lon1 == lon2) {
         return 0;
-      }
-      else {
-        var radlat1 = Math.PI * lat1/180;
-        var radlat2 = Math.PI * lat2/180;
-        var theta = lon1-lon2;
-        var radtheta = Math.PI * theta/180;
-        var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      } else {
+        var radlat1 = (Math.PI * lat1) / 180;
+        var radlat2 = (Math.PI * lat2) / 180;
+        var theta = lon1 - lon2;
+        var radtheta = (Math.PI * theta) / 180;
+        var dist =
+          Math.sin(radlat1) * Math.sin(radlat2) +
+          Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
         if (dist > 1) {
           dist = 1;
         }
         dist = Math.acos(dist);
-        dist = dist * 180/Math.PI;
+        dist = (dist * 180) / Math.PI;
         dist = dist * 60 * 1.1515;
         // dist = dist * 1.609344;
         return dist;
       }
     },
     scrollToSidebarEntry(selectedEntryID) {
-      if(selectedEntryID && this.$refs[selectedEntryID]) {
+      if (selectedEntryID && this.$refs[selectedEntryID]) {
         let clickedMenuElement = this.$refs[selectedEntryID][0];
-        if(clickedMenuElement) {
-          if(!this.currentlyHovered && (this.isLandscape || this.menuOpen)) {
-            clickedMenuElement.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+        if (clickedMenuElement) {
+          if (!this.currentlyHovered && (this.isLandscape || this.menuOpen)) {
+            clickedMenuElement.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+              inline: "center",
+            });
           }
         }
       }
-    }
+    },
   },
   mounted() {
-    if(this.selectedEntryID) {
+    if (this.selectedEntryID) {
       this.scrollToSidebarEntry(this.selectedEntryID);
     }
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
-
-@import '../../styles/base.scss';
+@import "../../styles/base.scss";
 
 .sidebar {
   z-index: 999999;
@@ -221,10 +280,9 @@ export default {
   right: ms(-2);
   width: auto;
 
-
   &::before {
     height: ms(-2);
-    content: '';
+    content: "";
     display: block;
     background-color: $brand-green;
     margin-bottom: ms(3);
@@ -321,7 +379,6 @@ export default {
   }
 
   &--postcode {
-
     margin-left: auto;
     position: relative;
 
@@ -330,7 +387,7 @@ export default {
       font-size: ms(-1);
       width: 11em;
       line-height: 1.6;
-      border: 1px solid darken($brand-green,15%);
+      border: 1px solid darken($brand-green, 15%);
       border-radius: 2em;
       padding: ms(-5) ms(-2);
 
@@ -350,9 +407,9 @@ export default {
       right: 1px;
       top: 1px;
       line-height: 1.4;
-      background-color: darken($brand-green,10%);
+      background-color: darken($brand-green, 10%);
       color: white;
-      border: 1px solid darken($brand-green,20%);
+      border: 1px solid darken($brand-green, 20%);
       border-radius: 2em;
       padding: ms(-4);
       svg {
@@ -402,11 +459,10 @@ export default {
       padding: 0 ms(2);
 
       @media screen and (orientation: landscape) and (min-width: 800px) {
-
       }
 
       // &:not(:last-child) {
-        border-top: 1px solid $light-gray;
+      border-top: 1px solid $light-gray;
       // }
 
       @extend .expand-enter-active;
@@ -435,7 +491,6 @@ export default {
         .sidebar--menu--item--arrow {
           transform: rotate(90deg);
         }
-
       }
 
       &:hover {
@@ -464,7 +519,6 @@ export default {
   }
 }
 
-
 .category-panel {
   flex: 1 1 70vh;
   overflow-y: auto;
@@ -477,7 +531,6 @@ export default {
     background-color: $brand-green;
     color: white;
     padding: ms(-6) ms(2);
-
   }
 
   &--entry {
@@ -485,9 +538,9 @@ export default {
     display: flex;
     flex-direction: row;
     text-align: left;
-    padding: ms(2) ms(2) ms(2) ms(2)/2;
+    padding: ms(2) ms(2) ms(2) ms(2) / 2;
     cursor: pointer;
-    border-left: ms(2)/2 solid transparent;
+    border-left: ms(2) / 2 solid transparent;
 
     + .category-panel--entry {
       border-top: 1px solid $light-gray;
@@ -522,7 +575,6 @@ export default {
       margin-top: -ms(0);
       text-overflow: ellipsis;
       white-space: nowrap;
-
     }
 
     &--location {
@@ -546,10 +598,7 @@ export default {
         background-color: $brand-green;
         color: $dark-gray;
       }
-
-
     }
   }
 }
-
 </style>
