@@ -9,7 +9,6 @@
 <script>
 import Map from './Map.vue';
 import Menu from './Menu.vue';
-import Popup from './Popup.vue';
 import Welcome from './Welcome.vue';
 
 export default {
@@ -18,8 +17,7 @@ export default {
   components: {
     Map,
     Menu,
-    Welcome,
-    Popup
+    Welcome
   },
   data () {
     return {

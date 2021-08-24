@@ -8,7 +8,7 @@ var slugify = require('slugify');
 // via a URL of this form. We just need to pass in the ID of the sheet
 // which we can find in the URL of the document.
 
-module.exports = (sheetID, documentID) => {
+module.exports = (sheetID, documentID, columns) => {
   let cachePath = `${__dirname}/../data/cache/${documentID}_${sheetID}.json`;
 
   return new Promise((resolve, reject) => {
@@ -20,29 +20,23 @@ module.exports = (sheetID, documentID) => {
     }
 
     else {
-      console.log(`Fetching data from https://spreadsheets.google.com/feeds/list/${documentID}/${sheetID}/public/values?alt=json`);
-
-      axios.get(`https://spreadsheets.google.com/feeds/list/${documentID}/${sheetID}/public/values?alt=json`)
+      console.log(`Fetching data from https://sheets.googleapis.com/v4/spreadsheets/${documentID}/values/${sheetID}?alt=json&key=AIzaSyDKG8NODyTNED_cjD0aMh0M2NFfH6Wn6FY`);
+      axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${documentID}/values/${sheetID}?alt=json&key=AIzaSyDKG8NODyTNED_cjD0aMh0M2NFfH6Wn6FY`)
         .then(response => {
 
           // massage the data from the Google Sheets API into
           // a shape that will more convenient for us in our SSG.
           var data = [];
+          let headers = response.data.values[0];
+          response.data.values.shift();
 
-          response.data.feed.entry.forEach(item => {
-            if(item.gsx$sitename.$t.trim() && item.gsx$latitude.$t.trim() && !item.gsx$dateclosed.$t) {
-              let row = {
-                "id": item.gsx$uprn?.$t + item.gsx$sitenumber?.$t + item.gsx$sitename?.$t.replace(' ', '-').toLowerCase(),
-                "name": item.gsx$sitename?.$t,
-                "category": item.gsx$locationtype?.$t,
-                "latitude": item.gsx$latitude?.$t,
-                "longitude": item.gsx$longitude?.$t,
-                "address": item.gsx$address?.$t,
-                "postcode": item.gsx$postcode?.$t,
-                "weight": item.gsx$_arr0q?.$t
-              };
-              data.push(row);
-            }
+          response.data.values.forEach((row,index) => {
+            let outputRow = {};
+            outputRow.id = index;
+            columns.forEach(column => {
+              outputRow[column] = row[headers.indexOf(column)];
+            });
+            data.push(outputRow);
           });
 
           // stash the data locally for developing without

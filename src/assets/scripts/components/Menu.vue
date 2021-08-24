@@ -70,13 +70,6 @@
         @mouseleave="currentlyHovered = null"
       >
         <template v-for="entry in entriesSortedByDistance">
-          <div
-            class="category-panel--type"
-            :key="entry.id"
-            v-if="!userLatLng.length && entry.type && newType(entry.type)"
-          >
-            {{ entry.type }}
-          </div>
           <button
             class="category-panel--entry"
             :class="{ selected: entry.id == selectedEntryID }"
@@ -86,14 +79,13 @@
             @click="$emit('menu-entry-selected', entry.id)"
           >
             <div class="category-panel--entry--text">
-              <span class="category-panel--entry--type">{{ entry.type }}</span>
-              <h3 class="category-panel--entry--title">{{ entry.name }}</h3>
+              <h3 class="category-panel--entry--title">{{ entry.site_name }}</h3>
             </div>
             <span class="category-panel--entry--location" v-if="entry.distance !== undefined">{{ entry.distance < 1 ? `${Math.round(entry.distance * 20)} mins walk` : `${entry.distance} miles` }} </span>
             <span
               class="category-panel--entry--location"
-              v-else-if="entry.postcode"
-              >{{ entry.postcode }}</span
+              v-else-if="entry.post_code"
+              >{{ entry.post_code }}</span
             >
           </button>
         </template>

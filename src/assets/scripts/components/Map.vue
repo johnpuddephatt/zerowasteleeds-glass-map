@@ -19,15 +19,12 @@
       <l-marker :ref="entry.id" v-for="entry in entriesWithLatLng" :key="entry.id" :lat-lng="getLatLng(entry)" @click="markerClicked(entry.id)" @keyup.enter="markerClicked(entry.id)" >
         <l-popup :ref="`popup-${entry.id}`" class="popup-inner" :options="{maxWidth: 480, offset: [0, -34], closeButton: true}">
           <div class="popup-header">
-            <p class="entry-category">{{ entry.category}}</p>
-            <h3 class="entry-title" v-html="entry.name"></h3>
+            <p class="entry-category">{{ entry.location_type}}</p>
+            <h3 class="entry-title" v-html="entry.site_name"></h3>
             <p class="entry-address" v-if="entry.address">{{ entry.address.replace(entry.postcode,'').toLowerCase() }}<span v-if="entry.postcode">, {{entry.postcode}}</span></p>
-            <p v-if="entry.description">{{entry.description}}</p>
-
-
             <a v-if="entry.latitude && entry.longitude" class="button is-primary" target="_blank" :href="googleMapsDirections(entry)">Get directions</a>
           </div>
-          <div class="popup-sidebar" v-if="parseInt(entry.weight)">
+          <div class="popup-sidebar" v-if="parseInt(entry['2020'])">
             <h4 class="popup-sidebar--title">Last year at this site:</h4>
             <ul>
               <li>
@@ -36,7 +33,7 @@
                   <h5 class="popup-sidebar--number">
                     <ICountUp
                       v-if="currentPopupID == entry.id"
-                      :endVal="convertWeightToNumber(entry.weight)"
+                      :endVal="convertWeightToNumber(entry['2020'])"
                       :options="options"
                     />kg</h5>
                   of glass recycled
@@ -48,7 +45,7 @@
                   <h5 class="popup-sidebar--number"><ICountUp
                   v-if="currentPopupID == entry.id"
                     :delay="250"
-                    :endVal="convertWeightToWords(entry.weight)"
+                    :endVal="convertWeightToWords(entry['2020'])"
                     :options="options"
                   /></h5>
                   <p>glass jars and bottles</p>
@@ -62,7 +59,7 @@
                     <ICountUp
                     v-if="currentPopupID == entry.id"
                       :delay="500"
-                      :endVal="convertWeightToEnergy(entry.weight)"
+                      :endVal="convertWeightToEnergy(entry['2020'])"
                       :options="options"
                     />kWh</h5>
                     <p>energy saved</p>
@@ -74,16 +71,16 @@
             <ul class="highlight">
               <li>
 
-                <img class="popup-sidebar--icon" :src="convertWeightToRealWorld(entry.weight)[2]" />
+                <img class="popup-sidebar--icon" :src="convertWeightToRealWorld(entry['2020'])[2]" />
                 <div class="popup-sidebar--text">
                   <h5 class="popup-sidebar--number">
                   <ICountUp
                   v-if="currentPopupID == entry.id"
                     :delay="750"
-                    :endVal="convertWeightToRealWorld(entry.weight)[0]"
+                    :endVal="convertWeightToRealWorld(entry['2020'])[0]"
                     :options="options"
                   /></h5>
-                  <p>{{ convertWeightToRealWorld(entry.weight)[1] }}</p>
+                  <p>{{ convertWeightToRealWorld(entry['2020'])[1] }}</p>
                 </div>
               </li>
             </ul>
